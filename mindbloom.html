@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MindBloom 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #db2777;
+    --light-pink: #fce7f3;
+    --rose: #f9a8d4;
+    --deep: #9d174d;
+    --darker: #6d0f35;
+    --glass: rgba(255,255,255,0.12);
+    --glass-border: rgba(255,255,255,0.25);
+    --text: #fff;
+    --text-soft: rgba(255,255,255,0.75);
+    --text-muted: rgba(255,255,255,0.5);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Lato', sans-serif;
+    background: linear-gradient(135deg, #6d0f35 0%, #9d174d 30%, #db2777 65%, #f472b6 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    color: var(--text);
+    overflow: hidden;
+  }
+  #app {
+    width: 100%;
+    max-width: 480px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px 16px 90px;
+    scroll-behavior: smooth;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* Glass card */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 20px;
+  }
+  .glass-sm {
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 14px 16px;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: rgba(109,15,53,0.85);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    padding: 8px 0 12px;
+    z-index: 100;
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 4px 0;
+  }
+  .nav-btn.active { color: var(--rose); }
+  .nav-btn .nav-icon { font-size: 20px; }
+  .nav-btn .nav-label { font-size: 10px; font-family: 'Lato', sans-serif; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  /* Typography */
+  h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; line-height: 1.2; }
+  h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; line-height: 1.3; }
+  h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; }
+  .subtitle { font-size: 13px; color: var(--text-soft); font-weight: 300; letter-spacing: 0.5px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; margin-bottom: 12px; opacity: 0.9; }
+
+  /* Buttons */
+  .btn {
+    background: linear-gradient(135deg, var(--pink), var(--deep));
+    border: none;
+    border-radius: 50px;
+    color: #fff;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .btn:active { transform: scale(0.97); opacity: 0.9; }
+  .btn-glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    color: #fff;
+    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-glass:active { transform: scale(0.97); }
+  .btn-glass.active { background: var(--pink); border-color: var(--pink); }
+  .btn-icon {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    color: #fff;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+  }
+  .btn-icon:active { transform: scale(0.93); }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.85; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes celebrate { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+  .fade-in { animation: fadeIn 0.4s ease both; }
+
+  /* Tab pages */
+  .tab-page { display: none; }
+  .tab-page.active { display: block; animation: fadeIn 0.35s ease; }
+
+  /* Streak circles */
+  .streak-row { display: flex; gap: 8px; justify-content: center; margin: 12px 0; }
+  .streak-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--glass-border);
+    background: var(--glass);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s;
+  }
+  .streak-dot.done { background: linear-gradient(135deg, var(--pink), var(--deep)); border-color: var(--rose); }
+
+  /* Affirmation card */
+  .affirmation-card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 28px;
+    padding: 32px 24px;
+    text-align: center;
+    margin: 16px 0;
+    animation: fadeIn 0.5s ease;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .affirmation-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    line-height: 1.5;
+    color: #fff;
+  }
+
+  /* Progress ring */
+  .ring-container { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+  .ring-container svg { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: rgba(255,255,255,0.15); }
+  .ring-fill { fill: none; stroke: url(#roseGrad); stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .ring-label { position: absolute; text-align: center; }
+
+  /* Input fields */
+  .input {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    color: #fff;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input::placeholder { color: var(--text-muted); }
+  .input:focus { border-color: var(--rose); }
+  textarea.input { resize: none; min-height: 90px; line-height: 1.5; }
+
+  /* Mood emojis */
+  .mood-row { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
+  .mood-btn {
+    font-size: 28px;
+    background: var(--glass);
+    border: 2px solid transparent;
+    border-radius: 50%;
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mood-btn.selected { border-color: var(--rose); background: rgba(249,168,212,0.2); transform: scale(1.15); }
+
+  /* Habit items */
+  .habit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .habit-check {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--glass-border);
+    background: var(--glass);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .habit-check.done { background: linear-gradient(135deg, var(--pink), var(--deep)); border-color: transparent; }
+
+  /* Heatmap */
+  .heatmap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 10px 0; }
+  .heat-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.3s;
+  }
+  .heat-cell.done { background: var(--pink); }
+  .heat-cell.partial { background: rgba(219,39,119,0.5); }
+
+  /* Lab accordion */
+  .lab-card { margin-bottom: 12px; overflow: hidden; }
+  .lab-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 16px 20px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    transition: all 0.2s;
+  }
+  .lab-header.open { border-radius: 16px 16px 0 0; border-bottom-color: transparent; }
+  .lab-body {
+    display: none;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-soft);
+  }
+  .lab-body.open { display: block; animation: fadeIn 0.3s ease; }
+
+  /* Breathing circle */
+  .breath-circle {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249,168,212,0.4), rgba(219,39,119,0.2));
+    border: 3px solid var(--rose);
+    display: flex; align-items: center; justify-content: center;
+    margin: 20px auto;
+    transition: transform 4s ease-in-out;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #fff;
+    text-align: center;
+  }
+
+  /* Toggle row */
+  .toggle-row { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+  .toggle-row::-webkit-scrollbar { display: none; }
+
+  /* Slider */
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.2);
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--rose), var(--pink));
+    cursor: pointer;
+  }
+
+  /* Vision board */
+  .vision-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0; }
+  .vision-card {
+    aspect-ratio: 1;
+    border-radius: 16px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 8px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-soft);
+  }
+  .vision-card .vision-emoji { font-size: 28px; }
+  .vision-card:active { transform: scale(0.95); }
+  .vision-card.add-card { border-style: dashed; opacity: 0.6; }
+
+  /* Weekly review cards */
+  .week-card { margin-bottom: 12px; }
+  .week-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    cursor: pointer;
+  }
+  .week-card-body {
+    display: none;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+  .week-card-body.open { display: block; animation: fadeIn 0.3s; }
+
+  /* Loading spinner */
+  .spinner { width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.2); border-top-color: var(--rose); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
+
+  /* Moon badge */
+  .moon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Challenge progress */
+  .challenge-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 6px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  .challenge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--rose), var(--pink));
+    border-radius: 6px;
+    transition: width 0.5s ease;
+  }
+
+  /* Chart */
+  .chart-area { margin: 10px 0; }
+  .chart-svg { width: 100%; height: 80px; }
+
+  /* Onboarding overlay */
+  #onboarding {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #6d0f35, #9d174d, #db2777);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 32px;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+  }
+  #onboarding.hidden { display: none; }
+  .onboarding-flower { font-size: 72px; animation: float 3s ease-in-out infinite; margin-bottom: 24px; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: rgba(109,15,53,0.95);
+    border: 1px solid var(--rose);
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 200;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+    max-width: 90vw;
+    text-align: center;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Pomodoro ring */
+  .pomo-ring { display: flex; flex-direction: column; align-items: center; margin: 16px 0; }
+
+  /* Scrolling sleep mode */
+  #sleep-overlay {
+    position: fixed;
+    inset: 0;
+    background: #2d0014;
+    z-index: 300;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+  }
+  #sleep-overlay.active { display: flex; }
+  .sleep-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.6;
+    color: rgba(249,168,212,0.8);
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  /* Mirror mode */
+  #mirror-overlay {
+    position: fixed;
+    inset: 0;
+    background: #2d0014;
+    z-index: 300;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+  }
+  #mirror-overlay.active { display: flex; }
+  .mirror-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.5;
+    color: #fff;
+    animation: fadeIn 1.5s ease;
+  }
+
+  /* Celebration */
+  #celebration {
+    position: fixed;
+    inset: 0;
+    background: rgba(109,15,53,0.95);
+    z-index: 400;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+  }
+  #celebration.active { display: flex; animation: celebrate 0.5s ease; }
+
+  .gap-8 { gap: 8px; }
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .text-center { text-align: center; }
+  .w-full { width: 100%; }
+  .opacity-70 { opacity: 0.7; }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 11px; }
+  .font-bold { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- Onboarding -->
+<div id="onboarding">
+  <div class="onboarding-flower">🌸</div>
+  <h1 style="margin-bottom:8px">MindBloom</h1>
+  <p class="subtitle" style="margin-bottom:32px;font-size:15px">Your daily sanctuary for growth, clarity & peace</p>
+  <div style="width:100%;max-width:320px;display:flex;flex-direction:column;gap:16px">
+    <input class="input" id="name-input" placeholder="What's your name, beautiful soul?" style="text-align:center;font-size:16px;padding:16px">
+    <button class="btn" onclick="startApp()" style="width:100%;padding:16px;font-size:16px">Begin My Journey 🌸</button>
+  </div>
+</div>
+
+<!-- Sleep Overlay -->
+<div id="sleep-overlay">
+  <button onclick="closeSleep()" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50%;width:40px;height:40px;color:#fff;font-size:18px;cursor:pointer">✕</button>
+  <div id="sleep-text" class="sleep-text"></div>
+  <p style="margin-top:32px;font-size:12px;color:rgba(249,168,212,0.4)">Breathe. Let go. You are safe.</p>
+</div>
+
+<!-- Mirror Overlay -->
+<div id="mirror-overlay">
+  <button onclick="closeMirror()" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50%;width:40px;height:40px;color:#fff;font-size:18px;cursor:pointer">✕</button>
+  <div id="mirror-text" class="mirror-text"></div>
+  <p style="margin-top:32px;font-size:12px;color:rgba(249,168,212,0.4);text-align:center">Look at yourself. Breathe. Believe every word.</p>
+</div>
+
+<!-- Celebration -->
+<div id="celebration">
+  <div style="font-size:72px;margin-bottom:16px">🎉</div>
+  <h2 id="celebration-title" style="margin-bottom:8px">Amazing!</h2>
+  <p id="celebration-msg" class="subtitle" style="margin-bottom:32px"></p>
+  <button class="btn" onclick="closeCelebration()">Continue 🌸</button>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Main App -->
+<div id="app">
+  <div class="content" id="main-content">
+
+    <!-- TODAY TAB -->
+    <div class="tab-page active" id="tab-today">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-top:8px">
+        <div>
+          <h1 id="greeting" style="font-size:24px">Good morning 🌸</h1>
+          <p class="subtitle" id="today-date"></p>
+        </div>
+        <div id="moon-badge" class="moon-badge"></div>
+      </div>
+
+      <!-- Affirmation Card -->
+      <div class="affirmation-card" id="affirmation-card">
+        <div style="font-size:28px" id="affir-icon">✨</div>
+        <div class="affirmation-text" id="affir-text">Loading your affirmation...</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <button class="btn-icon" onclick="prevAffirmation()">‹</button>
+        <button class="btn" onclick="claimAffirmation()" style="font-size:13px;padding:10px 20px">Claim This ✨</button>
+        <button class="btn-icon" onclick="nextAffirmation()">›</button>
+      </div>
+
+      <!-- Streak -->
+      <div class="glass mb-16">
+        <div class="flex items-center justify-between mb-8">
+          <span class="section-title" style="margin:0">🔥 Daily Streak</span>
+          <span id="streak-count" style="font-size:20px;font-weight:700;color:var(--rose)">0 days</span>
+        </div>
+        <div class="streak-row" id="streak-dots"></div>
+      </div>
+
+      <!-- Moon Affirmation -->
+      <div class="glass mb-16" id="moon-card">
+        <div class="section-title">🌙 Moon Energy</div>
+        <p id="moon-affir" class="text-sm" style="font-style:italic;line-height:1.6;color:var(--text-soft)"></p>
+      </div>
+
+      <!-- Weekly Challenge -->
+      <div class="glass mb-16">
+        <div class="flex items-center justify-between mb-8">
+          <div class="section-title" style="margin:0">🏆 Weekly Challenge</div>
+          <span id="challenge-days-count" class="text-xs" style="color:var(--rose)"></span>
+        </div>
+        <div id="challenge-title" style="font-weight:700;margin-bottom:4px;font-size:15px"></div>
+        <div id="challenge-desc" class="text-sm opacity-70 mb-8"></div>
+        <div class="challenge-bar"><div class="challenge-fill" id="challenge-fill" style="width:0%"></div></div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap" id="challenge-checks"></div>
+      </div>
+
+      <!-- Mirror Mode -->
+      <div style="margin-bottom:16px">
+        <button class="btn-glass w-full" onclick="openMirror()" style="width:100%;padding:14px;font-size:14px">🪞 Mirror Affirmation Mode</button>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass mb-16">
+        <div class="section-title">📊 Your Progress</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="glass-sm text-center">
+            <div style="font-size:28px;font-weight:700;color:var(--rose)" id="stat-streak">0</div>
+            <div class="text-xs opacity-70">Day Streak</div>
+          </div>
+          <div class="glass-sm text-center">
+            <div style="font-size:28px;font-weight:700;color:var(--rose)" id="stat-focus">0h</div>
+            <div class="text-xs opacity-70">Focus Time</div>
+          </div>
+          <div class="glass-sm text-center">
+            <div style="font-size:28px;font-weight:700;color:var(--rose)" id="stat-habits">0%</div>
+            <div class="text-xs opacity-70">Habits Done</div>
+          </div>
+          <div class="glass-sm text-center">
+            <div style="font-size:28px;font-weight:700;color:var(--rose)" id="stat-score">0</div>
+            <div class="text-xs opacity-70">Growth Score</div>
+          </div>
+        </div>
+        <!-- Mood Chart -->
+        <div class="mt-12">
+          <div class="text-sm opacity-70 mb-8">7-Day Mood</div>
+          <div class="chart-area">
+            <svg class="chart-svg" id="mood-chart" viewBox="0 0 300 80"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOALS TAB -->
+    <div class="tab-page" id="tab-goals">
+      <h2 style="margin-bottom:4px;padding-top:8px">My Power Goals 🎯</h2>
+      <p class="subtitle mb-16">Define who you're becoming</p>
+
+      <div id="goals-list" style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px"></div>
+      <button class="btn w-full mb-16" onclick="saveGoals()">Save My Goals ✨</button>
+
+      <!-- Habits -->
+      <div class="glass">
+        <div class="flex items-center justify-between mb-12">
+          <h3>Habit Tracker</h3>
+          <button class="btn-glass" onclick="addHabit()" style="padding:6px 14px;font-size:12px">+ Add</button>
+        </div>
+        <div id="habits-list"></div>
+        <div class="mt-12">
+          <div class="text-sm opacity-70 mb-8">Weekly Heatmap</div>
+          <div class="heatmap" id="habit-heatmap"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px">
+            <span class="text-xs opacity-50">Mon</span><span class="text-xs opacity-50">Tue</span><span class="text-xs opacity-50">Wed</span><span class="text-xs opacity-50">Thu</span><span class="text-xs opacity-50">Fri</span><span class="text-xs opacity-50">Sat</span><span class="text-xs opacity-50">Sun</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOCUS TAB -->
+    <div class="tab-page" id="tab-focus">
+      <h2 style="margin-bottom:4px;padding-top:8px">Focus Zone ⏱️</h2>
+      <p class="subtitle mb-16">Deep work, deep growth</p>
+
+      <div class="toggle-row mb-16">
+        <button class="btn-glass active" id="toggle-pomo" onclick="switchFocus('pomo')">🍅 Pomodoro</button>
+        <button class="btn-glass" id="toggle-breath" onclick="switchFocus('breath')">🌬️ Breathwork</button>
+      </div>
+
+      <!-- Pomodoro -->
+      <div id="pomo-section">
+        <div class="glass pomo-ring">
+          <svg width="200" height="200" viewBox="0 0 200 200">
+            <defs>
+              <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#f9a8d4"/>
+                <stop offset="100%" style="stop-color:#db2777"/>
+              </linearGradient>
+            </defs>
+            <circle class="ring-bg" cx="100" cy="100" r="85" stroke-width="8" transform="rotate(-90 100 100)"/>
+            <circle class="ring-fill" id="pomo-ring" cx="100" cy="100" r="85" stroke-width="8" stroke-dasharray="534" stroke-dashoffset="0"/>
+          </svg>
+          <div class="ring-label" style="inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;position:absolute">
+            <div style="font-size:36px;font-weight:700;font-family:'Playfair Display',serif" id="pomo-time">25:00</div>
+            <div class="text-xs opacity-70" id="pomo-mode">Work Session</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:16px">
+          <button class="btn" onclick="togglePomo()" id="pomo-btn">▶ Start</button>
+          <button class="btn-glass" onclick="resetPomo()">↺ Reset</button>
+        </div>
+        <div class="glass mt-16">
+          <div class="section-title">Session Goal</div>
+          <select class="input" id="pomo-goal" style="cursor:pointer">
+            <option value="">Select a goal...</option>
+          </select>
+          <div class="mt-8 text-sm opacity-70">Total focus: <span id="total-focus" style="color:var(--rose);font-weight:700">0h 0m</span></div>
+        </div>
+      </div>
+
+      <!-- Breathwork -->
+      <div id="breath-section" style="display:none">
+        <div class="glass mb-16">
+          <div class="section-title">Choose Technique</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn-glass active" id="breath-478" onclick="selectBreath('478')">4-7-8 Breathing</button>
+            <button class="btn-glass" id="breath-box" onclick="selectBreath('box')">Box Breathing</button>
+            <button class="btn-glass" id="breath-coh" onclick="selectBreath('coh')">Coherence Breathing</button>
+          </div>
+        </div>
+        <div class="glass text-center">
+          <div id="breath-instruction" style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px;font-style:italic">Ready to begin</div>
+          <div class="breath-circle" id="breath-circle">Breathe</div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:16px">
+            <button class="btn-glass active" onclick="setBreathDuration(2)">2 min</button>
+            <button class="btn-glass" onclick="setBreathDuration(5)">5 min</button>
+            <button class="btn-glass" onclick="setBreathDuration(10)">10 min</button>
+          </div>
+          <button class="btn mt-16 w-full" onclick="toggleBreath()" id="breath-btn" style="margin-top:16px">▶ Begin</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOURNAL TAB -->
+    <div class="tab-page" id="tab-journal">
+      <h2 style="margin-bottom:4px;padding-top:8px">My Journal 📓</h2>
+      <p class="subtitle mb-16">Reflect, grow, become</p>
+
+      <div class="toggle-row">
+        <button class="btn-glass active" id="j-today-btn" onclick="switchJournal('today')">Today</button>
+        <button class="btn-glass" id="j-week-btn" onclick="switchJournal('week')">Weekly</button>
+        <button class="btn-glass" id="j-sleep-btn" onclick="switchJournal('sleep')">Sleep</button>
+        <button class="btn-glass" id="j-letters-btn" onclick="switchJournal('letters')">Letters</button>
+      </div>
+
+      <!-- Today Journal -->
+      <div id="journal-today">
+        <div class="glass mb-12">
+          <div class="section-title">🌅 Morning Ritual</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <input class="input" id="grat1" placeholder="I'm grateful for...">
+            <input class="input" id="grat2" placeholder="Another thing I appreciate...">
+            <input class="input" id="grat3" placeholder="Something beautiful today...">
+            <textarea class="input" id="intention" placeholder="My intention for today..."></textarea>
+          </div>
+        </div>
+        <div class="glass mb-12">
+          <div class="section-title">🌙 Evening Reflection</div>
+          <textarea class="input" id="reflection" placeholder="How did today unfold? What did I learn?"></textarea>
+        </div>
+        <div class="glass mb-12">
+          <div class="section-title">How are you feeling?</div>
+          <div class="mood-row" id="journal-mood"></div>
+        </div>
+        <button class="btn w-full mb-16" onclick="saveJournal()">Save Today's Entry 🌸</button>
+
+        <!-- Streak Calendar -->
+        <div class="glass">
+          <div class="section-title">📅 Journal Streak</div>
+          <div id="journal-calendar" class="heatmap"></div>
+        </div>
+      </div>
+
+      <!-- Weekly Review -->
+      <div id="journal-week" style="display:none">
+        <div class="glass mb-12">
+          <h3 class="mb-12">Week of <span id="week-label"></span></h3>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <textarea class="input" id="w-accomplish" placeholder="What did I accomplish this week?"></textarea>
+            <textarea class="input" id="w-challenges" placeholder="What challenges did I face?"></textarea>
+            <textarea class="input" id="w-proud" placeholder="What am I proud of?"></textarea>
+            <textarea class="input" id="w-improve" placeholder="What will I do better next week?"></textarea>
+          </div>
+          <div class="mt-12">
+            <div class="text-sm mb-8">How was your week overall? <span id="week-rating-val" style="color:var(--rose);font-weight:700">5/10</span></div>
+            <input type="range" min="1" max="10" value="5" id="week-rating" oninput="document.getElementById('week-rating-val').textContent=this.value+'/10'">
+          </div>
+          <div class="mood-row mt-12" id="weekly-mood"></div>
+          <button class="btn w-full mt-16" onclick="saveWeeklyReview()" style="margin-top:16px">Seal My Week 📦</button>
+        </div>
+
+        <!-- Past weeks -->
+        <div id="past-weeks"></div>
+
+        <!-- Chart -->
+        <div class="glass mt-12">
+          <div class="section-title">📈 Weekly Growth</div>
+          <svg class="chart-svg" id="weekly-chart" viewBox="0 0 300 80"></svg>
+        </div>
+      </div>
+
+      <!-- Sleep Mode -->
+      <div id="journal-sleep" style="display:none">
+        <div class="glass">
+          <div class="section-title">🌙 Sleep Affirmation Mode</div>
+          <p class="text-sm opacity-70 mb-16">Drift into sleep with gentle affirmations</p>
+          <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">
+            <button class="btn-glass active" onclick="setSleepTimer(10)">10 min</button>
+            <button class="btn-glass" onclick="setSleepTimer(20)">20 min</button>
+            <button class="btn-glass" onclick="setSleepTimer(30)">30 min</button>
+          </div>
+          <button class="btn w-full" onclick="openSleep()" style="width:100%">Begin Sleep Mode 🌙</button>
+        </div>
+      </div>
+
+      <!-- Letters -->
+      <div id="journal-letters" style="display:none">
+        <div class="glass mb-12">
+          <div class="section-title">💌 Write to Future Me</div>
+          <textarea class="input mb-8" id="letter-text" placeholder="Dear future me..." style="min-height:140px"></textarea>
+          <div class="text-sm mb-8 opacity-70">Deliver in:</div>
+          <div style="display:flex;gap:8px;margin-bottom:16px">
+            <button class="btn-glass active" id="letter-3" onclick="setLetterTime(3)">3 months</button>
+            <button class="btn-glass" id="letter-6" onclick="setLetterTime(6)">6 months</button>
+            <button class="btn-glass" id="letter-12" onclick="setLetterTime(12)">12 months</button>
+          </div>
+          <button class="btn w-full" onclick="sealLetter()" style="width:100%">Seal My Letter 💌</button>
+        </div>
+        <div id="letters-list"></div>
+      </div>
+    </div>
+
+    <!-- VISION TAB -->
+    <div class="tab-page" id="tab-vision">
+      <h2 style="margin-bottom:4px;padding-top:8px">Vision Board 🌟</h2>
+      <p class="subtitle mb-16">See it, feel it, become it</p>
+      <div class="vision-grid" id="vision-grid"></div>
+    </div>
+
+    <!-- LAB TAB -->
+    <div class="tab-page" id="tab-lab">
+      <h2 style="margin-bottom:4px;padding-top:8px">The Lab 🧠</h2>
+      <p class="subtitle mb-16">The why behind the bloom</p>
+
+      <!-- Education -->
+      <div class="mb-16">
+        <div class="lab-card">
+          <div class="lab-header" onclick="toggleLab(this)">
+            <div style="display:flex;align-items:center;gap:10px"><span>🧠</span><span style="font-weight:700">Neuroplasticity</span></div>
+            <span>▾</span>
+          </div>
+          <div class="lab-body">
+            Your brain is not fixed. Every thought, repeated, carves a deeper neural pathway — like a stream slowly shaping stone.<br><br>
+            Affirmations work not because they are magic, but because they are repetition. The thoughts you return to most often become your default narration.<br><br>
+            Each time you choose a kinder thought, you weaken the old groove and strengthen a new one. After about 60 days of practice, the new pathway becomes the path of least resistance.
+          </div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-header" onclick="toggleLab(this)">
+            <div style="display:flex;align-items:center;gap:10px"><span>🎯</span><span style="font-weight:700">Reticular Activating System</span></div>
+            <span>▾</span>
+          </div>
+          <div class="lab-body">
+            Your brain receives 11 million bits of information per second but can only consciously process about 40. The RAS decides what makes it through.<br><br>
+            Whatever you focus on, the RAS filters reality to show you more of it. Focus on lack, and you see scarcity everywhere. Focus on opportunity, and doors appear where you saw only walls.<br><br>
+            Daily affirmations train your RAS to notice evidence of your goals — making the invisible, visible.
+          </div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-header" onclick="toggleLab(this)">
+            <div style="display:flex;align-items:center;gap:10px"><span>✨</span><span style="font-weight:700">Visualization</span></div>
+            <span>▾</span>
+          </div>
+          <div class="lab-body">
+            The brain cannot perfectly distinguish between a vividly imagined experience and a real one. Neural patterns activated during visualization are nearly identical to those activated during actual performance.<br><br>
+            Olympic athletes have used visualization for decades. Studies show that mental rehearsal improves performance almost as much as physical practice.<br><br>
+            When you visualize your goals in detail — the sights, sounds, feelings — you begin building the neural architecture of someone who has already achieved them.
+          </div>
+        </div>
+        <div class="lab-card">
+          <div class="lab-header" onclick="toggleLab(this)">
+            <div style="display:flex;align-items:center;gap:10px"><span>🌊</span><span style="font-weight:700">Conscious vs Subconscious</span></div>
+            <span>▾</span>
+          </div>
+          <div class="lab-body">
+            Your conscious mind is the tip of the iceberg — the 10% you're aware of. Your subconscious is the other 90%, silently running your habits, beliefs, and automatic responses.<br><br>
+            Most of our subconscious programming was installed before age 7. But here's the powerful truth: it can be reprogrammed at any age through repetition, emotion, and consistency.<br><br>
+            Sleep, meditation, and emotionally charged affirmations are the most direct pathways to the subconscious — which is why MindBloom focuses on these moments.
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Generator -->
+      <div class="glass">
+        <div class="section-title">🤖 AI Affirmation Generator</div>
+        <textarea class="input mb-12" id="ai-struggle" placeholder="Describe your current struggle or goal..." style="min-height:80px"></textarea>
+        <div class="text-sm mb-8 opacity-70">Choose your tone:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          <button class="btn-glass active" id="tone-gentle" onclick="selectTone('gentle')">🌸 Gentle</button>
+          <button class="btn-glass" id="tone-bold" onclick="selectTone('bold')">🔥 Bold</button>
+          <button class="btn-glass" id="tone-spiritual" onclick="selectTone('spiritual')">✨ Spiritual</button>
+          <button class="btn-glass" id="tone-scientific" onclick="selectTone('scientific')">🔬 Scientific</button>
+        </div>
+        <button class="btn w-full" onclick="generateAffirmations()" id="gen-btn" style="width:100%">Generate My Affirmations ✨</button>
+        <div id="ai-results" style="margin-top:16px"></div>
+
+        <!-- My Deck -->
+        <div id="my-deck-section" style="margin-top:20px">
+          <div class="section-title">💎 My Personal Deck</div>
+          <div id="my-deck-list"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('today', this)">
+      <span class="nav-icon">☀️</span>
+      <span class="nav-label">Today</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('goals', this)">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Goals</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('focus', this)">
+      <span class="nav-icon">⏱️</span>
+      <span class="nav-label">Focus</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('journal', this)">
+      <span class="nav-icon">📓</span>
+      <span class="nav-label">Journal</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('vision', this)">
+      <span class="nav-icon">🌟</span>
+      <span class="nav-label">Vision</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('lab', this)">
+      <span class="nav-icon">🧠</span>
+      <span class="nav-label">Lab</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+// ========== STATE ==========
+let state = {
+  name: '',
+  affirmationIndex: 0,
+  streak: 0,
+  streakDays: [],
+  goals: ['','',''],
+  habits: [],
+  habitLog: {},
+  journalEntries: {},
+  weeklyReviews: [],
+  moods: {},
+  focusMinutes: 0,
+  visionCards: [],
+  savedAffirmations: [],
+  challengeIndex: 0,
+  challengeProgress: {},
+  badges: [],
+  letterMonths: 3,
+  letters: [],
+  selectedTone: 'gentle'
+};
+
+// ========== DATA ==========
+const AFFIRMATIONS = [
+  { icon: '✨', text: 'I am becoming the most powerful version of myself, one day at a time.' },
+  { icon: '🌸', text: 'I deserve love, abundance, and every beautiful thing life has to offer.' },
+  { icon: '🔥', text: 'My potential is limitless. I grow stronger with every challenge I face.' },
+  { icon: '💎', text: 'I am worthy of my dreams. My vision is clear and my path is unfolding.' },
+  { icon: '🌊', text: 'I release what no longer serves me and welcome new possibilities.' },
+  { icon: '🦋', text: 'I am in the process of positive transformation. Change is my superpower.' },
+  { icon: '🌟', text: 'Abundance flows to me naturally and effortlessly in all areas of life.' },
+  { icon: '💫', text: 'My mind is a garden. I plant only seeds of peace, love, and success.' }
+];
+
+const MOON_PHASES = [
+  { name: 'New Moon 🌑', affirmation: 'I am planting seeds of infinite possibility. New beginnings are unfolding for me right now.' },
+  { name: 'Waxing Crescent 🌒', affirmation: 'I am expanding and growing into my highest self. Every day brings me closer to my dreams.' },
+  { name: 'First Quarter 🌓', affirmation: 'I overcome obstacles with grace and determination. I push through and rise higher.' },
+  { name: 'Waxing Gibbous 🌔', affirmation: 'I refine my path with clarity. My goals are crystallizing into beautiful reality.' },
+  { name: 'Full Moon 🌕', affirmation: 'I celebrate how far I have come. I am radiant, complete, and deeply fulfilled.' },
+  { name: 'Waning Gibbous 🌖', affirmation: 'I share my gifts generously. My abundance blesses everyone around me.' },
+  { name: 'Last Quarter 🌗', affirmation: 'I release what no longer serves my growth. I let go with love and gratitude.' },
+  { name: 'Waning Crescent 🌘', affirmation: 'I rest, restore, and prepare for rebirth. I trust in divine timing.' }
+];
+
+const CHALLENGES = [
+  { title: 'Compliment Yourself Daily', desc: 'Look in the mirror each morning and say one genuine compliment to yourself.' },
+  { title: 'No Negative Self-Talk', desc: 'Replace every negative thought about yourself with a kind, true alternative.' },
+  { title: 'Morning Visualization', desc: 'Spend 5 minutes each morning vividly imagining your dream life.' },
+  { title: 'Gratitude Before Phone', desc: 'Write 3 gratitudes before checking your phone each morning.' },
+  { title: 'Appreciation Practice', desc: 'Tell someone you genuinely appreciate them every single day.' },
+  { title: 'Mindful Walking', desc: 'Take a 10-minute walk with no phone, just present awareness.' },
+  { title: '3 Deep Breaths', desc: 'Before getting out of bed, take 3 slow, conscious deep breaths.' },
+  { title: 'Affirmation Journaling', desc: 'Write your top affirmation 10 times each evening before sleep.' }
+];
+
+const MOODS = ['😔', '😐', '🙂', '😊', '🌟'];
+const BREATH_TECHNIQUES = {
+  '478': { name: '4-7-8 Breathing', phases: [['Inhale', 4], ['Hold', 7], ['Exhale', 8]] },
+  'box': { name: 'Box Breathing', phases: [['Inhale', 4], ['Hold', 4], ['Exhale', 4], ['Hold', 4]] },
+  'coh': { name: 'Coherence Breathing', phases: [['Inhale', 5], ['Exhale', 5]] }
+};
+
+// ========== INIT ==========
+function init() {
+  const saved = localStorage.getItem('mindbloom_state');
+  if (saved) {
+    try { state = { ...state, ...JSON.parse(saved) }; } catch(e) {}
+  }
+  if (!state.name) {
+    document.getElementById('onboarding').classList.remove('hidden');
+    return;
+  }
+  launchApp();
+}
+
+function startApp() {
+  const name = document.getElementById('name-input').value.trim();
+  if (!name) { showToast('Please enter your name 🌸'); return; }
+  state.name = name;
+  saveState();
+  document.getElementById('onboarding').classList.add('hidden');
+  launchApp();
+}
+
+function launchApp() {
+  updateGreeting();
+  renderMoon();
+  renderAffirmation();
+  renderStreak();
+  renderChallenge();
+  renderGoals();
+  renderHabits();
+  renderVision();
+  renderStats();
+  renderMoodChart();
+  renderJournalCalendar();
+  renderPastWeeks();
+  renderWeeklyChart();
+  renderMyDeck();
+  renderLetters();
+  updatePomoGoals();
+  renderMoodPicker('journal-mood', 'journalMood', saveJournalMood);
+  renderMoodPicker('weekly-mood', 'weeklyMood', ()=>{});
+  renderHeatmap();
+  document.getElementById('week-label').textContent = getWeekLabel();
+}
+
+function saveState() {
+  localStorage.setItem('mindbloom_state', JSON.stringify(state));
+}
+
+// ========== GREETING ==========
+function updateGreeting() {
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greeting').textContent = `${greet}, ${state.name} 🌸`;
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const d = new Date();
+  document.getElementById('today-date').textContent = `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()} ${d.getFullYear()}`;
+}
+
+// ========== MOON ==========
+function getMoonPhase() {
+  const known = new Date(2000, 0, 6);
+  const now = new Date();
+  const diff = (now - known) / (1000 * 60 * 60 * 24);
+  const cycle = 29.53;
+  const phase = ((diff % cycle) + cycle) % cycle;
+  return Math.floor(phase / (cycle / 8));
+}
+
+function renderMoon() {
+  const p = getMoonPhase();
+  const m = MOON_PHASES[p];
+  document.getElementById('moon-badge').innerHTML = m.name;
+  document.getElementById('moon-affir').textContent = m.affirmation;
+}
+
+// ========== AFFIRMATIONS ==========
+function renderAffirmation() {
+  const a = AFFIRMATIONS[state.affirmationIndex];
+  document.getElementById('affir-icon').textContent = a.icon;
+  document.getElementById('affir-text').textContent = a.text;
+}
+function nextAffirmation() {
+  state.affirmationIndex = (state.affirmationIndex + 1) % AFFIRMATIONS.length;
+  renderAffirmation();
+}
+function prevAffirmation() {
+  state.affirmationIndex = (state.affirmationIndex - 1 + AFFIRMATIONS.length) % AFFIRMATIONS.length;
+  renderAffirmation();
+}
+function claimAffirmation() {
+  const today = new Date().toDateString();
+  if (!state.streakDays) state.streakDays = [];
+  if (!state.streakDays.includes(today)) {
+    state.streakDays.push(today);
+    state.streak = (state.streak || 0) + 1;
+    renderStreak();
+    showToast('Affirmation claimed! 🌸 Streak: ' + state.streak);
+    saveState();
+    renderStats();
+  } else {
+    showToast('Already claimed today ✨');
+  }
+}
+
+// ========== STREAK ==========
+function renderStreak() {
+  const container = document.getElementById('streak-dots');
+  container.innerHTML = '';
+  const days = ['M','T','W','T','F','S','S'];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const ds = d.toDateString();
+    const done = state.streakDays && state.streakDays.includes(ds);
+    const dot = document.createElement('div');
+    dot.className = 'streak-dot' + (done ? ' done' : '');
+    dot.textContent = done ? '✓' : days[6-i];
+    container.appendChild(dot);
+  }
+  document.getElementById('streak-count').textContent = (state.streak || 0) + ' days';
+  document.getElementById('stat-streak').textContent = state.streak || 0;
+}
+
+// ========== CHALLENGE ==========
+function renderChallenge() {
+  const idx = state.challengeIndex % CHALLENGES.length;
+  const c = CHALLENGES[idx];
+  document.getElementById('challenge-title').textContent = c.title;
+  document.getElementById('challenge-desc').textContent = c.desc;
+  const prog = state.challengeProgress[idx] || [];
+  const done = prog.length;
+  document.getElementById('challenge-fill').style.width = (done/7*100) + '%';
+  document.getElementById('challenge-days-count').textContent = done + '/7 days';
+  const checks = document.getElementById('challenge-checks');
+  checks.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'btn-glass';
+    btn.style.cssText = 'padding:6px 10px;font-size:12px;' + (prog.includes(i) ? 'background:var(--pink);' : '');
+    btn.textContent = prog.includes(i) ? '✓' : 'Day ' + (i+1);
+    btn.onclick = () => markChallengeDay(idx, i);
+    checks.appendChild(btn);
+  }
+}
+
+function markChallengeDay(idx, day) {
+  if (!state.challengeProgress[idx]) state.challengeProgress[idx] = [];
+  if (!state.challengeProgress[idx].includes(day)) {
+    state.challengeProgress[idx].push(day);
+    if (state.challengeProgress[idx].length === 7) {
+      showCelebration('Challenge Complete! 🏆', 'You earned a badge: ' + CHALLENGES[idx].title);
+      if (!state.badges) state.badges = [];
+      state.badges.push({ name: CHALLENGES[idx].title, date: new Date().toLocaleDateString(), emoji: '🏆' });
+    }
+    saveState();
+    renderChallenge();
+  }
+}
+
+// ========== GOALS ==========
+function renderGoals() {
+  const container = document.getElementById('goals-list');
+  container.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const div = document.createElement('div');
+    div.className = 'glass';
+    div.innerHTML = `
+      <div class="text-sm mb-8 opacity-70">Goal ${i+1}</div>
+      <input class="input mb-8" id="goal-${i}" placeholder="I want to..." value="${state.goals[i]||''}">
+      <div class="text-xs" style="color:var(--rose);font-style:italic" id="goal-id-${i}">${state.goals[i] ? '"I am the type of person who ' + state.goals[i].toLowerCase() + '"' : ''}</div>
+    `;
+    container.appendChild(div);
+    document.getElementById('goal-'+i).addEventListener('input', e => {
+      const v = e.target.value;
+      document.getElementById('goal-id-'+i).textContent = v ? '"I am the type of person who ' + v.toLowerCase() + '"' : '';
+    });
+  }
+  updatePomoGoals();
+}
+
+function saveGoals() {
+  state.goals = [0,1,2].map(i => document.getElementById('goal-'+i)?.value || '');
+  saveState();
+  updatePomoGoals();
+  showToast('Goals saved! 🎯 You\'re becoming unstoppable!');
+}
+
+function updatePomoGoals() {
+  const sel = document.getElementById('pomo-goal');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select a goal...</option>';
+  state.goals.filter(Boolean).forEach(g => {
+    const opt = document.createElement('option');
+    opt.textContent = g;
+    sel.appendChild(opt);
+  });
+}
+
+// ========== HABITS ==========
+function addHabit() {
+  const name = prompt('Enter habit name:');
+  if (!name) return;
+  if (!state.habits) state.habits = [];
+  state.habits.push({ name, log: [] });
+  saveState();
+  renderHabits();
+}
+
+function renderHabits() {
+  const container = document.getElementById('habits-list');
+  container.innerHTML = '';
+  if (!state.habits || state.habits.length === 0) {
+    container.innerHTML = '<p class="text-sm opacity-70 text-center" style="padding:16px">No habits yet. Add your first one!</p>';
+    renderHeatmap();
+    return;
+  }
+  const today = new Date().toDateString();
+  state.habits.forEach((h, i) => {
+    const done = h.log && h.log.includes(today);
+    const streak = getHabitStreak(h);
+    const div = document.createElement('div');
+    div.className = 'habit-item';
+    div.innerHTML = `
+      <div class="habit-check ${done ? 'done' : ''}" onclick="toggleHabit(${i})">${done ? '✓' : ''}</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${h.name}</div>
+        <div class="text-xs opacity-60" style="font-style:italic">I am someone who ${h.name.toLowerCase()}</div>
+        ${streak > 0 ? `<div class="text-xs" style="color:var(--rose);margin-top:2px">🔥 ${streak} day streak ${streak>=66?'👑':streak>=21?'⭐':streak>=7?'✨':''}</div>` : ''}
+      </div>
+      <button onclick="removeHabit(${i})" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px">✕</button>
+    `;
+    container.appendChild(div);
+  });
+  renderHeatmap();
+}
+
+function toggleHabit(i) {
+  const today = new Date().toDateString();
+  if (!state.habits[i].log) state.habits[i].log = [];
+  const idx = state.habits[i].log.indexOf(today);
+  if (idx === -1) {
+    state.habits[i].log.push(today);
+    const streak = getHabitStreak(state.habits[i]);
+    if (streak === 7 || streak === 21 || streak === 66) {
+      showCelebration(`${streak} Day Milestone! 🎉`, `You've kept "${state.habits[i].name}" for ${streak} days!`);
+    } else {
+      showToast('Habit done! 💪');
+    }
+  } else {
+    state.habits[i].log.splice(idx, 1);
+  }
+  saveState();
+  renderHabits();
+  renderStats();
+}
+
+function removeHabit(i) {
+  state.habits.splice(i, 1);
+  saveState();
+  renderHabits();
+}
+
+function getHabitStreak(h) {
+  if (!h.log || h.log.length === 0) return 0;
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    if (h.log.includes(d.toDateString())) { streak++; d.setDate(d.getDate()-1); }
+    else break;
+    if (streak > 200) break;
+  }
+  return streak;
+}
+
+function renderHeatmap() {
+  const container = document.getElementById('habit-heatmap');
+  container.innerHTML = '';
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    const ds = d.toDateString();
+    const total = state.habits ? state.habits.length : 0;
+    const done = total > 0 ? state.habits.filter(h => h.log && h.log.includes(ds)).length : 0;
+    const cell = document.createElement('div');
+    cell.className = 'heat-cell' + (done === total && total > 0 ? ' done' : done > 0 ? ' partial' : '');
+    container.appendChild(cell);
+  }
+}
+
+// ========== POMODORO ==========
+let pomoInterval = null;
+let pomoSeconds = 25 * 60;
+let pomoRunning = false;
+let pomoIsWork = true;
+const POMO_WORK = 25 * 60;
+const POMO_BREAK = 5 * 60;
+
+function togglePomo() {
+  if (pomoRunning) {
+    clearInterval(pomoInterval);
+    pomoRunning = false;
+    document.getElementById('pomo-btn').textContent = '▶ Resume';
+  } else {
+    pomoRunning = true;
+    document.getElementById('pomo-btn').textContent = '⏸ Pause';
+    pomoInterval = setInterval(() => {
+      pomoSeconds--;
+      if (pomoSeconds <= 0) {
+        clearInterval(pomoInterval);
+        pomoRunning = false;
+        if (pomoIsWork) {
+          state.focusMinutes = (state.focusMinutes || 0) + 25;
+          saveState();
+          renderStats();
+          showToast('Work session done! 🍅 Take a break!');
+          pomoIsWork = false;
+          pomoSeconds = POMO_BREAK;
+          document.getElementById('pomo-mode').textContent = 'Break Time';
+        } else {
+          pomoIsWork = true;
+          pomoSeconds = POMO_WORK;
+          document.getElementById('pomo-mode').textContent = 'Work Session';
+          showToast('Break over! Back to focus 💪');
+        }
+        document.getElementById('pomo-btn').textContent = '▶ Start';
+      }
+      updatePomoDisplay();
+    }, 1000);
+  }
+}
+
+function resetPomo() {
+  clearInterval(pomoInterval);
+  pomoRunning = false;
+  pomoIsWork = true;
+  pomoSeconds = POMO_WORK;
+  document.getElementById('pomo-btn').textContent = '▶ Start';
+  document.getElementById('pomo-mode').textContent = 'Work Session';
+  updatePomoDisplay();
+}
+
+function updatePomoDisplay() {
+  const m = Math.floor(pomoSeconds / 60);
+  const s = pomoSeconds % 60;
+  document.getElementById('pomo-time').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const total = pomoIsWork ? POMO_WORK : POMO_BREAK;
+  const progress = pomoSeconds / total;
+  const circumference = 2 * Math.PI * 85;
+  document.getElementById('pomo-ring').style.strokeDashoffset = circumference * progress;
+}
+
+function switchFocus(mode) {
+  document.getElementById('pomo-section').style.display = mode === 'pomo' ? 'block' : 'none';
+  document.getElementById('breath-section').style.display = mode === 'breath' ? 'block' : 'none';
+  document.getElementById('toggle-pomo').classList.toggle('active', mode === 'pomo');
+  document.getElementById('toggle-breath').classList.toggle('active', mode === 'breath');
+}
+
+// ========== BREATHWORK ==========
+let breathTech = '478';
+let breathRunning = false;
+let breathInterval = null;
+let breathDuration = 2;
+let breathPhaseIdx = 0;
+let breathPhaseTime = 0;
+
+function selectBreath(tech) {
+  breathTech = tech;
+  ['478','box','coh'].forEach(t => document.getElementById('breath-'+t).classList.toggle('active', t === tech));
+}
+
+function setBreathDuration(d) {
+  breathDuration = d;
+  document.querySelectorAll('#breath-section .btn-glass').forEach(b => {
+    if (b.textContent.includes('min')) b.classList.toggle('active', b.textContent.includes(d+' '));
+  });
+}
+
+function toggleBreath() {
+  if (breathRunning) {
+    clearInterval(breathInterval);
+    breathRunning = false;
+    document.getElementById('breath-btn').textContent = '▶ Begin';
+    document.getElementById('breath-circle').style.transform = 'scale(1)';
+    document.getElementById('breath-instruction').textContent = 'Ready to begin';
+    return;
+  }
+  breathRunning = true;
+  breathPhaseIdx = 0;
+  breathPhaseTime = 0;
+  document.getElementById('breath-btn').textContent = '⏸ Pause';
+  runBreathPhase();
+  breathInterval = setInterval(runBreathPhase, 1000);
+}
+
+function runBreathPhase() {
+  const phases = BREATH_TECHNIQUES[breathTech].phases;
+  const [label, dur] = phases[breathPhaseIdx];
+  breathPhaseTime++;
+  if (breathPhaseTime > dur) {
+    breathPhaseTime = 1;
+    breathPhaseIdx = (breathPhaseIdx + 1) % phases.length;
+  }
+  const [curLabel, curDur] = phases[breathPhaseIdx];
+  document.getElementById('breath-instruction').textContent = curLabel + '...';
+  document.getElementById('breath-circle').textContent = curLabel;
+  const scale = curLabel === 'Inhale' ? 1.4 : curLabel === 'Hold' ? 1.2 : 0.85;
+  document.getElementById('breath-circle').style.transform = `scale(${scale})`;
+}
+
+// ========== JOURNAL ==========
+function switchJournal(tab) {
+  ['today','week','sleep','letters'].forEach(t => {
+    document.getElementById('journal-'+t).style.display = t === tab ? 'block' : 'none';
+    document.getElementById('j-'+t+'-btn').classList.toggle('active', t === tab);
+  });
+}
+
+function saveJournal() {
+  const today = new Date().toDateString();
+  if (!state.journalEntries) state.journalEntries = {};
+  state.journalEntries[today] = {
+    grat: [
+      document.getElementById('grat1').value,
+      document.getElementById('grat2').value,
+      document.getElementById('grat3').value
+    ],
+    intention: document.getElementById('intention').value,
+    reflection: document.getElementById('reflection').value
+  };
+  saveState();
+  showToast('Journal saved! 📓 Beautiful reflection.');
+  renderJournalCalendar();
+}
+
+function saveJournalMood(i) {
+  state.moods = state.moods || {};
+  state.moods[new Date().toDateString()] = i;
+  saveState();
+  renderMoodChart();
+  renderStats();
+}
+
+function renderMoodPicker(containerId, key, callback) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  MOODS.forEach((emoji, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mood-btn';
+    btn.textContent = emoji;
+    const today = new Date().toDateString();
+    if (state.moods && state.moods[today] === i) btn.classList.add('selected');
+    btn.onclick = () => {
+      container.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      callback(i);
+    };
+    container.appendChild(btn);
+  });
+}
+
+function renderJournalCalendar() {
+  const container = document.getElementById('journal-calendar');
+  if (!container) return;
+  container.innerHTML = '';
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    const ds = d.toDateString();
+    const cell = document.createElement('div');
+    cell.className = 'heat-cell' + (state.journalEntries && state.journalEntries[ds] ? ' done' : '');
+    container.appendChild(cell);
+  }
+}
+
+// ========== WEEKLY REVIEW ==========
+function getWeekLabel() {
+  const d = new Date();
+  const day = d.getDay();
+  const monday = new Date(d); monday.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+  return monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function saveWeeklyReview() {
+  const review = {
+    week: getWeekLabel(),
+    date: new Date().toISOString(),
+    accomplish: document.getElementById('w-accomplish').value,
+    challenges: document.getElementById('w-challenges').value,
+    proud: document.getElementById('w-proud').value,
+    improve: document.getElementById('w-improve').value,
+    rating: parseInt(document.getElementById('week-rating').value),
+    mood: document.querySelector('#weekly-mood .mood-btn.selected')?.textContent || '🙂'
+  };
+  if (!state.weeklyReviews) state.weeklyReviews = [];
+  state.weeklyReviews.unshift(review);
+  saveState();
+  showCelebration('Week Sealed! 📦', 'Your growth story is being written, one week at a time.');
+  ['w-accomplish','w-challenges','w-proud','w-improve'].forEach(id => document.getElementById(id).value = '');
+  renderPastWeeks();
+  renderWeeklyChart();
+}
+
+function renderPastWeeks() {
+  const container = document.getElementById('past-weeks');
+  if (!container || !state.weeklyReviews) return;
+  container.innerHTML = '';
+  state.weeklyReviews.slice(0, 8).forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'week-card';
+    div.innerHTML = `
+      <div class="week-card-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div>
+          <div style="font-weight:700;font-size:14px">Week of ${r.week}</div>
+          <div class="text-xs opacity-60">${r.mood} Rating: ${r.rating}/10</div>
+        </div>
+        <span>▾</span>
+      </div>
+      <div class="week-card-body">
+        ${r.accomplish ? `<div class="mb-8"><strong>Accomplished:</strong><br>${r.accomplish}</div>` : ''}
+        ${r.proud ? `<div class="mb-8"><strong>Proud of:</strong><br>${r.proud}</div>` : ''}
+        ${r.improve ? `<div><strong>Next week:</strong><br>${r.improve}</div>` : ''}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderWeeklyChart() {
+  const svg = document.getElementById('weekly-chart');
+  if (!svg || !state.weeklyReviews || state.weeklyReviews.length < 2) {
+    if (svg) svg.innerHTML = '<text x="150" y="40" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="12">Add weekly reviews to see your growth chart</text>';
+    return;
+  }
+  const data = state.weeklyReviews.slice(0, 8).reverse().map(r => r.rating);
+  drawLineChart(svg, data, 300, 80);
+}
+
+function renderMoodChart() {
+  const svg = document.getElementById('mood-chart');
+  if (!svg) return;
+  const today = new Date();
+  const data = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    data.push((state.moods && state.moods[d.toDateString()] !== undefined) ? state.moods[d.toDateString()] : null);
+  }
+  drawLineChart(svg, data.map(v => v !== null ? (v+1)*2 : null), 300, 80);
+}
+
+function drawLineChart(svg, data, w, h) {
+  const valid = data.filter(v => v !== null);
+  if (valid.length < 2) { svg.innerHTML = '<text x="150" y="40" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="12">Track more days to see chart</text>'; return; }
+  const max = Math.max(...valid, 1);
+  const min = Math.min(...valid);
+  const pad = 10;
+  const points = data.map((v, i) => {
+    const x = pad + (i / (data.length-1)) * (w - pad*2);
+    const y = v !== null ? h - pad - ((v - min) / (max - min || 1)) * (h - pad*2) : null;
+    return { x, y };
+  });
+  const validPts = points.filter(p => p.y !== null);
+  const pathD = validPts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#f9a8d4;stop-opacity:1"/>
+        <stop offset="100%" style="stop-color:#db2777;stop-opacity:1"/>
+      </linearGradient>
+    </defs>
+    <path d="${pathD}" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${validPts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3" fill="#f9a8d4"/>`).join('')}
+  `;
+}
+
+// ========== SLEEP MODE ==========
+let sleepTimer = 10;
+let sleepInterval = null;
+let sleepAffirIdx = 0;
+
+function setSleepTimer(t) { sleepTimer = t; }
+
+function openSleep() {
+  document.getElementById('sleep-overlay').classList.add('active');
+  showNextSleepAffirmation();
+  sleepInterval = setInterval(showNextSleepAffirmation, 6000);
+  setTimeout(closeSleep, sleepTimer * 60 * 1000);
+}
+
+function showNextSleepAffirmation() {
+  sleepAffirIdx = (sleepAffirIdx + 1) % AFFIRMATIONS.length;
+  document.getElementById('sleep-text').textContent = AFFIRMATIONS[sleepAffirIdx].text;
+}
+
+function closeSleep() {
+  clearInterval(sleepInterval);
+  document.getElementById('sleep-overlay').classList.remove('active');
+}
+
+// ========== MIRROR MODE ==========
+let mirrorInterval = null;
+let mirrorIdx = 0;
+
+function openMirror() {
+  document.getElementById('mirror-overlay').classList.add('active');
+  mirrorIdx = 0;
+  showMirrorAffirmation();
+  mirrorInterval = setInterval(() => {
+    document.getElementById('mirror-text').style.opacity = '0';
+    setTimeout(() => {
+      mirrorIdx = (mirrorIdx + 1) % AFFIRMATIONS.length;
+      showMirrorAffirmation();
+      document.getElementById('mirror-text').style.opacity = '1';
+    }, 800);
+  }, 6000);
+}
+
+function showMirrorAffirmation() {
+  document.getElementById('mirror-text').textContent = AFFIRMATIONS[mirrorIdx].text;
+  document.getElementById('mirror-text').style.transition = 'opacity 0.8s ease';
+  document.getElementById('mirror-text').style.opacity = '1';
+}
+
+function closeMirror() {
+  clearInterval(mirrorInterval);
+  document.getElementById('mirror-overlay').classList.remove('active');
+}
+
+// ========== LETTERS ==========
+let letterMonths = 3;
+function setLetterTime(m) {
+  letterMonths = m;
+  [3,6,12].forEach(v => document.getElementById('letter-'+v).classList.toggle('active', v === m));
+}
+
+function sealLetter() {
+  const text = document.getElementById('letter-text').value.trim();
+  if (!text) { showToast('Write your letter first 💌'); return; }
+  const openDate = new Date();
+  openDate.setMonth(openDate.getMonth() + letterMonths);
+  if (!state.letters) state.letters = [];
+  state.letters.unshift({
+    text,
+    written: new Date().toLocaleDateString(),
+    openDate: openDate.toISOString(),
+    months: letterMonths
+  });
+  document.getElementById('letter-text').value = '';
+  saveState();
+  showToast('Letter sealed! 💌 Opens in ' + letterMonths + ' months');
+  renderLetters();
+}
+
+function renderLetters() {
+  const container = document.getElementById('letters-list');
+  if (!container || !state.letters) return;
+  container.innerHTML = '';
+  state.letters.forEach((l, i) => {
+    const now = new Date();
+    const open = new Date(l.openDate);
+    const isOpen = now >= open;
+    const daysLeft = Math.ceil((open - now) / (1000*60*60*24));
+    const div = document.createElement('div');
+    div.className = 'glass mb-12';
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700">💌 Written ${l.written}</div>
+          <div class="text-xs opacity-60">${isOpen ? '🔓 Open now!' : `🔒 Opens in ${daysLeft} days`}</div>
+        </div>
+        <span style="font-size:28px">${isOpen ? '💌' : '🔒'}</span>
+      </div>
+      ${isOpen ? `<div class="text-sm" style="font-style:italic;line-height:1.6;color:var(--text-soft);padding:12px;background:rgba(255,255,255,0.05);border-radius:12px">${l.text}</div>` : `<div class="text-xs opacity-50">Your future self is waiting to read this...</div>`}
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ========== VISION BOARD ==========
+function renderVision() {
+  const grid = document.getElementById('vision-grid');
+  grid.innerHTML = '';
+  if (!state.visionCards) state.visionCards = [];
+  state.visionCards.forEach((card, i) => {
+    const div = document.createElement('div');
+    div.className = 'vision-card';
+    div.style.borderColor = card.color || 'rgba(255,255,255,0.2)';
+    div.innerHTML = `<div class="vision-emoji">${card.emoji}</div><div>${card.label}</div>`;
+    div.onclick = () => viewVisionCard(i);
+    grid.appendChild(div);
+  });
+  if (state.visionCards.length < 12) {
+    const add = document.createElement('div');
+    add.className = 'vision-card add-card';
+    add.innerHTML = '<div style="font-size:28px">+</div><div>Add Dream</div>';
+    add.onclick = addVisionCard;
+    grid.appendChild(add);
+  }
+}
+
+function addVisionCard() {
+  const emojis = ['🏠','💰','🌍','❤️','💪','🎓','🌟','✈️','🎵','🌸','💎','🦋'];
+  const emoji = prompt('Choose an emoji for your vision (paste one):') || emojis[Math.floor(Math.random()*emojis.length)];
+  const label = prompt('Describe this dream in a few words:');
+  if (!label) return;
+  if (!state.visionCards) state.visionCards = [];
+  state.visionCards.push({ emoji, label, color: 'rgba(249,168,212,0.3)' });
+  saveState();
+  renderVision();
+  showToast('Dream added! 🌟 See it, feel it, become it!');
+}
+
+function viewVisionCard(i) {
+  const card = state.visionCards[i];
+  showCelebration(card.emoji + ' ' + card.label, 'This is your destiny. Feel it as already real. 🌟');
+}
+
+// ========== AI AFFIRMATIONS ==========
+function selectTone(tone) {
+  state.selectedTone = tone;
+  ['gentle','bold','spiritual','scientific'].forEach(t => {
+    document.getElementById('tone-'+t).classList.toggle('active', t === tone);
+  });
+}
+
+async function generateAffirmations() {
+  const struggle = document.getElementById('ai-struggle').value.trim();
+  if (!struggle) { showToast('Describe your struggle or goal first 🌸'); return; }
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  const results = document.getElementById('ai-results');
+  results.innerHTML = '<div class="spinner"></div>';
+
+  const toneInstructions = {
+    gentle: 'warm, nurturing, compassionate, and softly encouraging',
+    bold: 'powerful, fierce, motivating, and unapologetically strong',
+    spiritual: 'mystical, soul-deep, connected to universal energy and higher purpose',
+    scientific: 'evidence-based, grounded in neuroscience and psychology, rational yet uplifting'
+  };
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `You are a compassionate affirmation coach. Create 5 powerful, personalized affirmations for someone who shared this: "${struggle}".
+          
+Tone: ${toneInstructions[state.selectedTone]}
+
+Rules:
+- Each affirmation must start with "I am", "I have", or "I choose"
+- Make them specific to their situation
+- Each must be 1-2 sentences max
+- Make them emotionally resonant and believable
+
+Return ONLY a JSON array of 5 strings, nothing else. Example: ["I am...", "I have...", "I choose..."]`
+        }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content[0].text.replace(/```json|```/g, '').trim();
+    const affirmations = JSON.parse(text);
+    results.innerHTML = '';
+    affirmations.forEach(a => {
+      const div = document.createElement('div');
+      div.className = 'glass-sm mb-8 fade-in';
+      div.style.marginBottom = '10px';
+      div.innerHTML = `
+        <div style="font-family:'Playfair Display',serif;font-style:italic;margin-bottom:10px;line-height:1.5">${a}</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-glass" onclick="saveToMyDeck('${a.replace(/'/g,"\\'")}')">❤️ Save</button>
+          <button class="btn-glass" onclick="copyText('${a.replace(/'/g,"\\'")}')">📋 Copy</button>
+        </div>
+      `;
+      results.appendChild(div);
+    });
+  } catch(e) {
+    results.innerHTML = '<div class="text-sm opacity-70 text-center">Could not generate. Please try again.</div>';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Generate My Affirmations ✨';
+}
+
+function saveToMyDeck(text) {
+  if (!state.savedAffirmations) state.savedAffirmations = [];
+  if (!state.savedAffirmations.includes(text)) {
+    state.savedAffirmations.push(text);
+    saveState();
+    renderMyDeck();
+    showToast('Saved to your deck! 💎');
+  } else {
+    showToast('Already in your deck ✨');
+  }
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('Copied! 📋'));
+}
+
+function renderMyDeck() {
+  const container = document.getElementById('my-deck-list');
+  if (!container || !state.savedAffirmations || state.savedAffirmations.length === 0) {
+    if (container) container.innerHTML = '<p class="text-sm opacity-50 text-center" style="padding:12px">Generate and save affirmations to build your personal deck</p>';
+    return;
+  }
+  container.innerHTML = '';
+  state.savedAffirmations.forEach((a, i) => {
+    const div = document.createElement('div');
+    div.className = 'glass-sm mb-8 fade-in';
+    div.style.marginBottom = '8px';
+    div.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="font-size:12px;font-style:italic;flex:1;line-height:1.5;color:var(--text-soft)">${a}</div>
+        <button onclick="removeFromDeck(${i})" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;flex-shrink:0">✕</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function removeFromDeck(i) {
+  state.savedAffirmations.splice(i, 1);
+  saveState();
+  renderMyDeck();
+}
+
+// ========== STATS ==========
+function renderStats() {
+  document.getElementById('stat-streak').textContent = state.streak || 0;
+  const focusH = Math.floor((state.focusMinutes || 0) / 60);
+  const focusM = (state.focusMinutes || 0) % 60;
+  document.getElementById('stat-focus').textContent = focusH + 'h';
+  document.getElementById('total-focus').textContent = focusH + 'h ' + focusM + 'm';
+  const today = new Date().toDateString();
+  const total = state.habits ? state.habits.length : 0;
+  const done = total > 0 ? state.habits.filter(h => h.log && h.log.includes(today)).length : 0;
+  document.getElementById('stat-habits').textContent = total > 0 ? Math.round(done/total*100) + '%' : '0%';
+  const score = Math.min(100, (state.streak || 0) * 5 + focusH * 10 + (done/Math.max(total,1)) * 30);
+  document.getElementById('stat-score').textContent = Math.round(score);
+}
+
+// ========== LAB ACCORDION ==========
+function toggleLab(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.lab-body').forEach(b => { b.classList.remove('open'); b.previousElementSibling.classList.remove('open'); });
+  if (!isOpen) { body.classList.add('open'); header.classList.add('open'); }
+}
+
+// ========== NAVIGATION ==========
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('main-content').scrollTop = 0;
+}
+
+// ========== TOAST ==========
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ========== CELEBRATION ==========
+function showCelebration(title, msg) {
+  document.getElementById('celebration-title').textContent = title;
+  document.getElementById('celebration-msg').textContent = msg;
+  document.getElementById('celebration').classList.add('active');
+}
+function closeCelebration() {
+  document.getElementById('celebration').classList.remove('active');
+}
+
+// ========== START ==========
+init();
+</script>
+</body>
+</html>
