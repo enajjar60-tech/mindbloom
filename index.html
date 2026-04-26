@@ -5,6 +5,86 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>MindBloom 🌸</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+  import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+  // YOUR FIREBASE CONFIG — replace with yours from Firebase Console
+  const firebaseConfig = {
+    apiKey: "AIzaSyA3ZGpR2OQ-o4nPI-MKiiA_sDkzeGOYxn0",
+    authDomain: "mindbloom-b48f8.firebaseapp.com",
+    projectId: "mindbloom-b48f8",
+    storageBucket: "mindbloom-b48f8.firebasestorage.app",
+    messagingSenderId: "929377617715",
+    appId: "1:929377617715:web:19f4a08db1b63f3cad6046"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // Make available globally
+  window.firebaseAuth = auth;
+  window.firebaseDb = db;
+  window.firebaseProvider = provider;
+  window.firebaseSignIn = signInWithPopup;
+  window.firebaseSignOut = signOut;
+  window.firebaseOnAuth = onAuthStateChanged;
+  window.firebaseDoc = doc;
+  window.firebaseSetDoc = setDoc;
+  window.firebaseGetDoc = getDoc;
+
+  // Listen for auth state
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      window.currentUser = user;
+      // Load user data from Firestore
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        window._firebaseState = data;
+      }
+      // Hide login, show app
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('onboarding').classList.add('hidden');
+      document.getElementById('app').style.display = 'flex';
+      if (window.launchApp) window.launchApp(user);
+    } else {
+      window.currentUser = null;
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    }
+  });
+
+  // Google Sign In
+  window.googleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch(e) {
+      alert('Sign in failed. Please try again.');
+    }
+  };
+
+  // Save state to Firestore
+  window.saveToFirebase = async (stateData) => {
+    if (!window.currentUser) return;
+    try {
+      const docRef = doc(db, 'users', window.currentUser.uid);
+      await setDoc(docRef, stateData, { merge: true });
+    } catch(e) {
+      console.log('Save error:', e);
+    }
+  };
+
+  // Sign out
+  window.signOutUser = async () => {
+    await signOut(auth);
+  };
+</script>
 <style>
   :root {
     --pink: #db2777;
@@ -536,6 +616,17 @@
 </head>
 <body>
 
+<!-- Google Login Screen -->
+<div id="login-screen" style="display:flex;position:fixed;inset:0;background:linear-gradient(135deg,#6d0f35,#9d174d,#db2777);flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:32px;text-align:center;">
+  <div style="font-size:72px;margin-bottom:24px;animation:float 3s ease-in-out infinite">🌸</div>
+  <h1 style="font-family:Playfair Display,serif;font-size:36px;margin-bottom:8px;color:#fff">MindBloom</h1>
+  <p style="color:rgba(255,255,255,0.7);margin-bottom:48px;font-size:15px">Your daily sanctuary for growth, clarity and peace</p>
+  <button onclick="googleSignIn()" style="display:flex;align-items:center;gap:12px;background:#fff;border:none;border-radius:50px;padding:16px 32px;font-size:16px;font-weight:700;cursor:pointer;color:#333;width:100%;max-width:300px;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <img src="https://www.google.com/favicon.ico" width="20" height="20" alt="Google">
+    Continue with Google
+  </button>
+  <p style="margin-top:24px;font-size:12px;color:rgba(255,255,255,0.4)">Your progress is always saved and synced 🌸</p>
+</div>
 <!-- Onboarding -->
 <div id="onboarding">
   <div class="onboarding-flower">🌸</div>
@@ -1073,6 +1164,7 @@ function launchApp() {
 
 function saveState() {
   localStorage.setItem('mindbloom_state', JSON.stringify(state));
+  if (window.saveToFirebase) window.saveToFirebase(state);
 }
 
 // ========== GREETING ==========
